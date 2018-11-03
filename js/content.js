@@ -62,6 +62,94 @@ function removetoolbar(){
 
 }
 
+function similationElement() {
+  console.log("similationElement");
+  var direction = "left";
+  var posbegin = "+100%";
+  var posend = "-100%";
+
+  var timecredit = 35;
+
+  var beginbeh = "normal";
+  // beginbeh = "alternate"
+
+  var similation = true;
+
+
+  // create marquee
+  var newframe = document.createElement("div");
+  newframe.setAttribute('id','stefanvdfinance');
+  // newframe.style.background = "";
+  document.body.insertBefore(newframe, document.body.firstChild);
+
+  // var newspeedleft = document.createElement("div");
+  // newspeedleft.setAttribute('class','arrowleft');
+  // newspeedleft.style.left = "240px"; // can change?
+  // newspeedleft.textContent = "<";
+  // newspeedleft.addEventListener("mousedown", function() {});
+  // newspeedleft.addEventListener("mouseup", function() {});
+  // newframe.appendChild(newspeedleft);
+  //
+  // var newbar = document.createElement("div");
+  // newbar.setAttribute('class', "bar");
+  // newbar.style.left = "260px";
+  // newframe.appendChild(newbar);
+
+  var movingframe = document.createElement("div");
+  movingframe.setAttribute('id', "stefanvdfinancemarquee");
+
+
+  // movingframe.style.fontFamily = getfontfamily;
+  // movingframe.style.fontSize = getfontsize + "px";
+
+  //me add
+  var t = document.createTextNode("a random sentence very randomly whatever blablablasdf;aslkdjf;alksdjf;alskjf;lak  hahahaha wow okay sure i mean whatever delay no more");
+  movingframe.style.color = "white";
+
+
+  movingframe.appendChild(t);
+
+  movingframe.addEventListener("mouseover", function() {}, false);
+  movingframe.addEventListener("mouseout", function() {}, false);
+
+  var similation = true;
+  	if(similation == true) {
+  	   // bar animation move
+  	   var pos = -100;
+  	   var id = window.setInterval(frame, 1000);
+  	   var coord;
+  	   // window.clearInterval(id);
+  	   function frame() {
+  				var d = new Date();
+  				var s = d.getSeconds() + Math.floor(d.getMilliseconds() / 1000);
+
+  				if(s > 200){
+  					s = 0;
+  					pos = 0;
+  					movingframe.style.transform = "translateX(" + 0 + "%)";
+  				}else{
+  					pos = parseFloat(s * 3.4);
+  					coord = pos - 100;
+  					movingframe.style.transform = "translateX(" + coord + "%)";
+  				}
+  	   }
+  	}
+
+    newframe.appendChild(movingframe);
+
+  var newspeedright = document.createElement("div");
+  newspeedright.setAttribute('class','arrowright');
+  newspeedright.style.right = "0px";
+  newspeedright.textContent = ">";
+  newspeedright.addEventListener("mousedown", function() {}, false);
+  newspeedright.addEventListener("mouseup", function() {}, false);
+  newframe.appendChild(newspeedright);
+
+  console.log("returning "+ newframe);
+  return newframe;
+}
+
+
 function addtoolbar(){
   console.log('addtoolbar\n');
   var getpositiontop = true; // not sure where it is sett
@@ -139,13 +227,7 @@ function addtoolbar(){
 			div.style.zIndex = 2147483647;
 			div.style.width  = '100%';
 			div.style.boxSizing = "border-box";
-			if (dropshadow == true) {
-				if (getpositiontop == true) {
-					div.style.boxShadow = "0px 2px 10px rgba(0,0,0,.2)";
-				} else{
-					div.style.boxShadow = "0px -2px 10px rgba(0,0,0,.2)";
-				}
-			}
+
 
       // create hide button
       var btn = document.createElement("button");
@@ -157,8 +239,15 @@ function addtoolbar(){
       btn.style.float = "right";
       btn.appendChild(t);
       div.appendChild(btn);
+      console.log("apendded: ");
+
+
+      var newframe = similationElement();
+      console.log("content: " + newframe);
+      div.appendChild(newframe);
 
 			document.documentElement.appendChild(div);
+
 		}
 }
 
@@ -167,78 +256,7 @@ var addbar = null; var dropshadow = null; var allsites = null; var toolbaronly =
 addtoolbar();
 $("hideBtn").click(() => removetoolbar());
 
-/** listen and get request to remove toolbar **/
 
-// chrome.runtime.onMessage.addListener(function(request, sender, sendMessage) {
-//     if (request.action == "addremove") {
-//         chrome.storage.sync.get(['addbar','dropshadow','toolbarDomains','allsites','toolbaronly','getpositiontop','getpositionbottom','toolbarwhite','toolbarblack'], function(items) {
-//           addbar = items['addbar'];
-//           dropshadow = items['dropshadow'];if(dropshadow == null)dropshadow = true;
-//           allsites = items['allsites'];if(allsites == null)allsites = true;
-//           toolbaronly = items['toolbaronly'];if(toolbaronly == null)toolbaronly = false;
-//           toolbarDomains = items['toolbarDomains'];
-//           getpositiontop = items['getpositiontop'];if(getpositiontop == null)getpositiontop = true;
-//           getpositionbottom = items['getpositionbottom'];if(getpositionbottom == null)getpositionbottom = false;
-//           toolbarwhite = items['toolbarwhite'];if(toolbarwhite == null)toolbarwhite = true;
-//           toolbarblack = items['toolbarblack'];if(toolbarblack == null)toolbarblack = false;
-//
-//           if(addbar == true){
-//           	if(toolbaronly == true){
-//           	var currenturl = window.location.protocol + '//' + window.location.host;
-//           	var blackrabbit = false;
-//           	if(typeof toolbarDomains == "string") {
-//           		toolbarDomains = JSON.parse(toolbarDomains);
-//           		var abuf = [];
-//           		for(var domain in toolbarDomains)
-//           			abuf.push(domain);
-//           			abuf.sort();
-//           			for(var i = 0; i < abuf.length; i++){
-//           				if(toolbarwhite == true){
-//           					if(currenturl == abuf[i]){
-//           						// prevent opening in the popup window
-//           						if (window.opener && window.opener !== window) {
-//           							// you are in a popup
-//           						} else {
-//           							addtoolbar();
-//           						}
-//           					}else{
-//           						removetoolbar();
-//           					}
-//           				}
-//           				else if(toolbarblack == true){
-//           					if(currenturl == abuf[i]){blackrabbit=true;}
-//           				}
-//           			}
-//           		}
-//           		if(toolbarblack == true){
-//           			if(blackrabbit == false){
-//           				// prevent opening in the popup window
-//           				if (window.opener && window.opener !== window) {
-//           					// you are in a popup
-//           				} else {
-//           					addtoolbar();
-//           				}
-//           				blackrabbit = false;
-//           			}else{
-//           				removetoolbar();
-//           			}
-//           		}
-//           	}else{
-//           		// prevent opening in the popup window
-//           		if (window.opener && window.opener !== window) {
-//           			// you are in a popup
-//           		} else {
-//           			addtoolbar();
-//           		}
-//           	}
-//           }else{
-//           	removetoolbar();
-//           }
-//           });
-//
-//     } else if (request.action == "toolbarrefresh") {
-//     	removetoolbar();
-//     	addtoolbar();
-//         //window.location.reload();
-//     }
-// });
+
+// prevent right click -- do we need this?
+// document.addEventListener('contextmenu', event => event.preventDefault());
