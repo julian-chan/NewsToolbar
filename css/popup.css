@@ -1,0 +1,15 @@
+body {
+  min-width: 400px;
+  max-width: 100%;
+  position: relative;
+  vertical-align:middle;
+}
+
+h2 img {
+  float: left;
+  height: 2rem;
+}
+
+#showtoolbarbtn {
+  width: 100%;
+}
