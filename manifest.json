@@ -10,11 +10,14 @@
     "default_popup": "view/popup.html"
   },
   "content_scripts": [
-  {
-    "matches": [
-      "<all_urls>"
-    ],
-    "js": ["jquery-3.3.1.min.js", "js/content.js", "js/toolbar.js"]
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": ["jquery-3.3.1.min.js", "js/content.js"]
+    }
+  ],
+  "background": {
+    "scripts": ["jquery-3.3.1.min.js", "js/background.js"]
   }
-]
 }
