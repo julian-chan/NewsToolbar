@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
   });
 
-  var newsUpdateTimer = setInterval(fetchNews, 1 * 60 * 1000);
+  var newsUpdateTimer = setInterval(fetchNews, 1 * 20 * 1000);
 
   function fetchNews() {
     if (jQuery) {
@@ -56,33 +56,24 @@ function getArticleFromURL(host, articleUrl, articleSelector) {
     }
     );
 
-    chrome.storage.local.get(['result'], function(data_arr) {
-      // Host
-      data_arr.result[articleUrl] = {'host': host};
-      chrome.storage.local.set({'result': data_arr.result});
-    });
-
-    run(articleUrl, result.join("\n"), function (url, data) {
+    run(articleUrl, result.join("\n"), function (url, summary, sentiment) {
       // Summary
-      console.log(data);
       chrome.storage.local.get(['result'], function(data_arr) {
-        data_arr.result[url]['summary'] = data;
-        chrome.storage.local.set({'result': data_arr.result});
+        console.log(data_arr.result);
       })
-    }, function (url, data) {
-      // Sentiment
-      console.log(data);
       chrome.storage.local.get(['result'], function(data_arr) {
-        data_arr.result[url]['sentiment'] = data;
+        data_arr.result[url] = {};
+        data_arr.result[url]['host'] = "CNN";
+        data_arr.result[url]['summary'] = summary;
+        data_arr.result[url]['sentiment'] = sentiment;
         chrome.storage.local.set({'result': data_arr.result});
-      })
+      });
     });
     // console.log("---------------------------------------------\n");
     // console.log(articleUrl);
     // console.log(result.join("\n"));
     // console.log("---------------------------------------------\n");
-  }});
-}
+  }})};
 
 function getArticles(host, pageUrl, pageSelector, articleSelector) {
   $.ajax({url: pageUrl, success: function(data){
@@ -146,21 +137,56 @@ let get_sentiments = function (url, articles, callback_fn) {
     fetch(myRequest).then(function(response) {
         response.json().then(function (data) {
           console.log(data);
-          callback_fn(url, data.documents[0]['score']);
+          if (data.documents[0] !== undefined) {
+            callback_fn(url, data.documents[0]['score']);
+          } else {
+            callback_fn(url, 1);
+          }
         })
       })
     };
 
+let analyze = function (url, articles_summary, articles_sentiment, callback_fn) {
+    var output = {};
+    var fd = new FormData();
+    fd.append('text', articles_summary)
+    var myInit = {method: 'POST', headers: {'Api-Key': deepai_accessKey}, body: fd};
+    var myRequest = new Request("https://api.deepai.org/api/summarization", myInit)
+    fetch(myRequest).then(function(response) {
+        response.json().then(function (data) {
+          output['summary'] = [url, data['output']];
+        })
+      });
 
-let run = function(url, passage, summary_callback_fn, sentiment_callback_fn) {
+    let body = JSON.stringify (articles_sentiment);
+    myInit = {method: 'POST', headers: {'Ocp-Apim-Subscription-Key' : azure_accessKey, 'content-type': 'application/json'}, body: body};
+    myRequest = new Request("https://westcentralus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment", myInit)
+    fetch(myRequest).then(function(response) {
+        response.json().then(function (data) {
+          if (data.documents[0] !== undefined) {
+            output['sentiment'] = [url, data.documents[0]['score']];
+          } else {
+            output['sentiment'] = [url, 1];
+          }
+          if (!('summary' in output)) {
+            output['summary'] = [url, 'No summary available.'];
+          }
+          callback_fn(output['summary'][0], output['summary'][1], output['sentiment'][1]); 
+        })
+      });
+}
+
+
+let run = function(url, passage, callback_fn) {
     let doc = {'documents': [
         {'id': '1', 'language': 'en', 'text': passage}
     ]};
 
     console.log("run");
 
-    get_sentiments (url, doc, sentiment_callback_fn);
-    get_summary (url, passage, summary_callback_fn);
+    analyze(url, passage, doc, callback_fn);
+    // get_sentiments (url, doc, sentiment_callback_fn);
+    // get_summary (url, passage, summary_callback_fn);
 };
 
 
