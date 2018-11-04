@@ -103,38 +103,69 @@ function similationElement() {
   // movingframe.style.fontSize = getfontsize + "px";
 
   //me add
-  var textContainer = document.createElement("span");
-  textContainer.setAttribute("style", "white-space: nowrap;");
-  var t = document.createTextNode("a random sentence very randomly whatever blablablasdf;aslkdjf;alksdjf;alskjf;lak  hahahaha wow okay sure i mean whatever delay no more");
-  textContainer.appendChild(t);
+  var createTextContainer = function(sourceName, text, sentiment, url) {
+    var hyperlink = document.createElement("a");
+    hyperlink.setAttribute("href", url);
+    hyperlink.setAttribute("target", "_blank");
+    hyperlink.setAttribute("style", "color: inherit;text-decoration: inherit;");
+    var textContainer = document.createElement("span");
+    var color;
+    if(sentiment < 0.20) {
+      color = "#ff4554";
+    } else if (sentiment < 0.4) {
+      color = "#FFA4AC";
+    } else if (sentiment < 0.6) {
+      color = "#FFFFFF";
+    } else if (sentiment < 0.8) {
+      color = "#C6E990";
+    } else {
+      color = "#a1e736";
+    }
+    textContainer.setAttribute("style", "white-space: nowrap; font-size:medium; color:" + color + "; margin: 0 20px 0 20px;");
+    var t = document.createTextNode("[" + sourceName + "] " + text);
+    hyperlink.appendChild(t);
+    textContainer.appendChild(hyperlink);
+    return textContainer;
+  };
+
+  var lasttextContainer = createTextContainer("CNN", "Since Merahile benefiting from the backing and brand of a stable industry giant.", 1, "https://www.cnn.com/us?refresh=1");
+  movingframe.appendChild(lasttextContainer);
+  lasttextContainer = createTextContainer("LOL", "hahahahaha wow1", 0.7, "https://www.cnn.com/us?refresh=1");
+  movingframe.appendChild(lasttextContainer);
+  lasttextContainer = createTextContainer("LOL", "hahahahaha wow2", 0.5, "https://www.cnn.com/us?refresh=1");
+  movingframe.appendChild(lasttextContainer);
+  lasttextContainer = createTextContainer("LOL", "hahahahaha wow3", 0.3, "https://www.cnn.com/us?refresh=1");
+  movingframe.appendChild(lasttextContainer);
+  lasttextContainer = createTextContainer("LOL", "hahahahaha wow4", 0.1, "https://www.cnn.com/us?refresh=1");
+  movingframe.appendChild(lasttextContainer);
+
+  var end = document.createElement("span");
+  end.setAttribute("id", "end");
+  lasttextContainer.appendChild(end);
+
   movingframe.style.color = "white";
-
-
-  movingframe.appendChild(textContainer);
-
   movingframe.addEventListener("mouseover", function() {}, false);
   movingframe.addEventListener("mouseout", function() {}, false);
 
   var similation = true;
   	if(similation == true) {
   	   // bar animation move
-  	   var pos = -100;
+  	   var pos = 0;
   	   var id = window.setInterval(frame, 50);
   	   var coord;
   	   // window.clearInterval(id);
   	   function frame() {
-  				var d = new Date();
-  				var s = d.getSeconds() + (d.getMilliseconds() / 1000);
 
-  				if(s > 200){
-  					s = 0;
-  					pos = 0;
-  					movingframe.style.transform = "translateX(" + 0 + "%)";
-  				}else{
-  					pos = parseFloat(s * 3.4);
-  					coord = pos - 100;
-  					movingframe.style.transform = "translateX(" + coord + "%)";
-  				}
+         if(movingframe.style.transform.length == 0) {
+           movingframe.style.transform = "translateX(" + 101 + "%)";
+         }
+         var percentage = parseFloat(movingframe.style.transform.match(/[+-]?([0-9]*[.])?[0-9]+/)[0]);
+         percentage = percentage - 0.25;
+         var endposi = end.getBoundingClientRect();
+         if(endposi.left < 0) {
+           percentage = 100;
+         }
+         movingframe.style.transform = "translateX(" + percentage + "%)";
   	   }
   	}
 
@@ -150,6 +181,11 @@ function similationElement() {
 
   console.log("returning "+ newframe);
   return newframe;
+}
+
+function updatetoolbar(){
+  removetoolbar();
+  addtoolbar();
 }
 
 
