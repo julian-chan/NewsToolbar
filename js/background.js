@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   }
 });
 
-function getArticleFromURL(articleUrl, articleSelector) {
+function getArticleFromURL(host, articleUrl, articleSelector) {
   $.ajax({url: articleUrl, success: function(data){
     var page = $(data);
     result = [];
@@ -38,22 +38,21 @@ function getArticleFromURL(articleUrl, articleSelector) {
     }
     );
 
+    chrome.storage.local.get(['result'], function(data_arr) {
+      // Host
+      data_arr.result[url] = {'host': host};
+      chrome.storage.local.set({'result': data_arr.result});
+    })
 
     run(url, result.join("\n"), function (url, data) {
       // Summary
       chrome.storage.local.get(['result'], function(data_arr) {
-        if (!(url in data_arr.result)) {
-          data_arr.result[url] = {};
-        }
         data_arr.result[url]['summary'] = data;
         chrome.storage.local.set({'result': data_arr.result});
       })
     }, function (url, data) {
       // Sentiment
       chrome.storage.local.get(['result'], function(data_arr) {
-        if (!(url in data_arr.result)) {
-          data_arr.result[url] = {};
-        }
         data_arr.result[url]['sentiment'] = data;
         chrome.storage.local.set({'result': data_arr.result});
       })
@@ -65,18 +64,18 @@ function getArticleFromURL(articleUrl, articleSelector) {
   }});
 }
 
-function getArticles(pageUrl, pageSelector, articleSelector) {
+function getArticles(host, pageUrl, pageSelector, articleSelector) {
   $.ajax({url: pageUrl, success: function(data){
     var page = $(data);
     var urlsInSelector = page.find(pageSelector + " a");
     let slashIndex = pageUrl.indexOf("/", 8);
-    let host = slashIndex == -1 ? pageUrl : pageUrl.substr(0, slashIndex);
-    let urlsArray = Array.from(urlsInSelector, url => host + $(url).prop("pathname"));
+    let domain = slashIndex == -1 ? pageUrl : pageUrl.substr(0, slashIndex);
+    let urlsArray = Array.from(urlsInSelector, url => domain + $(url).prop("pathname"));
     let urlsSet = new Set(urlsArray);
     console.log(urlsSet);
     urlsSet.forEach(
         url => {
-          getArticleFromURL(url, articleSelector);
+          getArticleFromURL(host, url, articleSelector);
         }
     );
   }});
