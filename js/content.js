@@ -103,11 +103,14 @@ function similationElement() {
   // movingframe.style.fontSize = getfontsize + "px";
 
   //me add
+  var textContainer = document.createElement("span");
+  textContainer.setAttribute("style", "white-space: nowrap;");
   var t = document.createTextNode("a random sentence very randomly whatever blablablasdf;aslkdjf;alksdjf;alskjf;lak  hahahaha wow okay sure i mean whatever delay no more");
+  textContainer.appendChild(t);
   movingframe.style.color = "white";
 
 
-  movingframe.appendChild(t);
+  movingframe.appendChild(textContainer);
 
   movingframe.addEventListener("mouseover", function() {}, false);
   movingframe.addEventListener("mouseout", function() {}, false);
