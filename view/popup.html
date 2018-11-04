@@ -8,10 +8,11 @@
 
   <body>
 
-    <button type="button" class="btn btn-primary" id="showtoolbarbtn"> Show ToolBar </button>
+    <!-- <button type="button" class="btn btn-primary" id="showtoolbarbtn"> Show ToolBar </button> -->
 
-    <div class="container">
-      <h2> <img src="../icons/icon.png"/> NewsToolbar </h1>
+    <div class="card">
+      <div class="card-body container">
+      <h2 class="card-title"> <img src="../icons/icon.png"/> NewsToolbar </h2>
       <h4> Settings </h4>
 
       <form>
@@ -22,8 +23,9 @@
 
         <div class="form-group" id="form-lstcheck"> onload? </div>
 
-
-            <div class="container form-group custom-group">
+        <label>Custom New Site</label>
+        <div class="container custom-group">
+            <div class="card-body form-group">
               <label> Source Name </label>
               <input type="text" class="form-control" id="sname" placeholder="eg: CNN">
               <label> URL of Source </label>
@@ -33,14 +35,15 @@
               <label> CSS Selector for Contents </label>
               <input type="text" class="form-control" id="contentcss" placeholder="eg: .content">
             </div>
-
-            <button type="button" class="btn btn-secondary addBtn" id="addBtn"></button>
+          </div>
+          <button type="button" class="btn btn-secondary addBtn" id="addBtn"></button>
 
 
 
         <!-- <button class="btn btn-primary submitBtn" type="submit" id="submitBtn"> Update </button> -->
       </form>
     </div>
+  </div>
 
   </body>
 
