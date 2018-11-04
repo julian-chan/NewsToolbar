@@ -24,11 +24,21 @@ input[type=checkbox] {
   height: 3rem;
   background-image: url("../icons/add-circle.svg");
   position: -1rem;
+  float: right;
 }
 
 .submitBtn {
   float: right;
   margin-bottom: 2rem;
+}
+
+.selectedNews {
+  background: grey;
+  margin: 0.5rem;
+}
+
+.list-group-item {
+  padding: 0.5rem;
 }
 
 /* input[type=checkbox] {

@@ -15,30 +15,32 @@
       <h4> Settings </h4>
 
       <form>
+        <label> Selected Sites </label>
+        <ul class="list-group" id="selected"></ul>
+
         <label>Default News Sites</label>
+
         <div class="form-group" id="form-lstcheck"> onload? </div>
 
-        <div class="container">
-        <div class="row">
-          <div class="col-3">
-            <div class="form-group">
-              <label> Enter the url of your favorite news website </label>
+
+            <div class="container form-group custom-group">
+              <label> Source Name </label>
+              <input type="text" class="form-control" id="sname" placeholder="eg: CNN">
+              <label> URL of Source </label>
               <input type="url" class="form-control" id="url" placeholder="eg: https://www.cnn.com/us">
               <label> CSS Selector for links </label>
               <input type="text" class="form-control" id="linkcss" placeholder="eg: .lstdiv">
               <label> CSS Selector for Contents </label>
               <input type="text" class="form-control" id="contentcss" placeholder="eg: .content">
-
             </div>
-          </div>
-          <div class="col-2">
-            <button type="button" class="btn btn-secondary addBtn" onclick="addAnother()"></button>
-          </div>
-          </div>
-        </div>
-        <button class="btn btn-primary submitBtn" type="submit" id="submitBtn"> Update </button>
-      </form>
 
+            <button type="button" class="btn btn-secondary addBtn" id="addBtn"></button>
+
+
+
+        <!-- <button class="btn btn-primary submitBtn" type="submit" id="submitBtn"> Update </button> -->
+      </form>
+    </div>
 
   </body>
 
