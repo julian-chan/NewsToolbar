@@ -26,19 +26,27 @@ let azure_key_phrases_path = '/text/analytics/v2.0/keyPhrases';
 let deepai_uri = 'https://api.deepai.org';
 let deepai_summary_path = '/api/summarization';
 
-let response_handler = function (response) {
+let response_handler_azure = function (response) {
     let body = '';
     response.on ('data', function (d) {
         body += d;
     });
     response.on ('end', function () {
         let body_ = JSON.parse (body);
-        let body__ = JSON.stringify (body_, null, '  ');
-        console.log (body__);
+        console.log (body_['documents'][0]['score']);
     });
     response.on ('error', function (e) {
         console.log ('Error: ' + e.message);
     });
+};
+
+let response_handler_deepai = function (err, httpResponse, body) {
+    if (err) {
+        console.error('request failed:', err);
+        return;
+    }
+    var response = JSON.parse(body);
+    console.log(response['output']);
 };
 
 // Not using DeepAI Sentiment Analysis because it only returns {Positive, Neutral, Negative} 
@@ -52,15 +60,8 @@ let get_summary = function (articles) {
         formData: {
             'text': articles
         }
-    }, function callback(err, httpResponse, body) {
-        if (err) {
-            console.error('request failed:', err);
-            return;
-        }
-        var response = JSON.parse(body);
-        console.log(response);
-    });
-}
+    }, response_handler_deepai)
+};
 
 let get_sentiments = function (articles) {
     let body = JSON.stringify (articles);
@@ -74,10 +75,10 @@ let get_sentiments = function (articles) {
         }
     };
 
-    let req = https.request (request_params, response_handler);
-    req.write (body);
-    req.end ();
-}
+    let req = https.request (request_params, response_handler_azure);
+    req.write(body);
+    req.end();
+};
 
 let get_key_phrases = function (articles) {
     let body = JSON.stringify (articles);
@@ -91,10 +92,10 @@ let get_key_phrases = function (articles) {
         }
     };
 
-    let req = https.request (request_params, response_handler);
+    let req = https.request (request_params, response_handler_azure);
     req.write (body);
     req.end ();
-}
+};
 
 let run = function(passage) {
     let doc = {'documents': [
@@ -103,9 +104,9 @@ let run = function(passage) {
 
     get_sentiments (doc);
     get_summary (passage);
-}
+};
 
 
 // Example
 let article = 'An African Methodist pastor, dressed in a dark suit and white clerical collar, greeted a Conservative rabbi, wearing a black overcoat and matching fedora, in the lobby of a downtown hotel on Friday morning. They spread their arms wide and embraced at length, the rabbi patting the pastor rhythmically on the back as the pastor drew him close. Words were not necessary.The two men had never met, but for a week they have been bound by the unspeakable grief of two unconscionable desecrations. The pastor was the Rev. Eric S.C. Manning, who leads Emanuel African Methodist Episcopal Church in Charleston, S.C., where nine parishioners were  in a racist attack during a Wednesday night Bible study on June 17, 2015. The rabbi was Jeffrey Myers of the Tree of Life congregation in Pittsburgh’s Squirrel Hill neighborhood, where 11 worshipers were gunned down during shabbat services last Saturday.When a virulent anti-Semite walked through unlocked doors into a house of God that morning and opened fire on believers in prayer, the analogies to the massacre at Emanuel A.M.E. became inescapable. Here within 40 months were two ruthlessly murderous attacks in the most sacred of spaces, victimizing minority communities — one racial, one religious — that share a centuries-long struggle against bigotry and persecution.In both instances, the gunmen left a cache of hate-filled online commentary and eagerly volunteered their motives.'
-run(article)
+run(article);
