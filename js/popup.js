@@ -12,6 +12,15 @@ function addToSelected(sname) {
   wrapper.innerHTML += sname + ', ';
 }
 
+function updateSelected() {
+  chrome.storage.local.get(['defaultSetting'], function(result) {
+
+        var newArr = (result['defaultSetting'] == undefined) ? []: result['defaultSetting'];
+        var wrapper = document.getElementById("selected");
+        wrapper.innerHTML = newArr.join(", ");
+  });
+}
+
 function loadInitialSelected() {
   chrome.storage.local.get(['newsSetting'], function(result) {
 
@@ -90,22 +99,35 @@ function addAnother() {
 
 function addCnn() {
   // right now ok with one single checkbox, if more default is added need to change this
-  var cnnchecked = !cnnchecked;
-
+  var cnnchecked = document.getElementById("CNN").checked;
   if (cnnchecked) {
-    addToSelected('CNN');
 
     chrome.storage.local.get(['defaultSetting'], function(result) {
 
           var newArr = (result['defaultSetting'] == undefined) ? []: result['defaultSetting'];
-          newArr = [];
           newArr.push('cnn');
 
           chrome.storage.local.set({'defaultSetting': newArr}, function() {
               // console.log('[popup] Value is set to ' + newArr);
+              updateSelected();
           });
     });
-    document.getElementById("CNN").disabled = true;
+    //document.getElementById("CNN").disabled = true;
+  } else {
+    chrome.storage.local.get(['defaultSetting'], function(result) {
+
+          var newArr = (result['defaultSetting'] == undefined) ? []: result['defaultSetting'];
+          newArr = newArr.filter(function(item) {
+              return item != 'cnn';
+          })
+
+          console.log(newArr);
+
+          chrome.storage.local.set({'defaultSetting': newArr}, function() {
+              // console.log('[popup] Value is set to ' + newArr);
+              updateSelected();
+          });
+    });
   }
 }
 
@@ -115,6 +137,8 @@ window.onload = function () {
 
   document.getElementById("addBtn").addEventListener("click", addAnother);
   document.getElementById("CNN").addEventListener("click", addCnn);
+
+  updateSelected();
 
   console.log("in popup.js");
 };
