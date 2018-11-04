@@ -7,9 +7,39 @@ body {
 
 h2 img {
   float: left;
-  height: 2rem;
+  height: 3rem;
+  padding-right: 1rem;
 }
 
 #showtoolbarbtn {
   width: 100%;
 }
+
+input[type=checkbox] {
+  margin: 1rem;
+}
+
+.addBtn {
+  width: 3rem;
+  height: 3rem;
+  background-image: url("../icons/add-circle.svg");
+  position: -1rem;
+}
+
+/* input[type=checkbox] {
+   position: absolute;
+   top: -9999px;
+   left: -9999px;
+}
+.form-check-label {
+  background-color: white;
+  border-color: blue;
+  color: blue;
+  display: inline-block;
+  padding: 1rem;
+  cursor: pointer;
+}
+input[type=checkbox]:checked + .form-check-label {
+   background-color: blue;
+   color: white;
+} */

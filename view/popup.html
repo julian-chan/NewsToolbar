@@ -1,26 +1,46 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script type="text/javascript" src="popup.js"></script>
+    <script type="text/javascript" src="../js/popup.js"></script>
     <link href="../bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/popup.css" rel="stylesheet">
   </head>
 
-  <button type="button" class="btn btn-primary" id="showtoolbarbtn"> Show ToolBar </button>
+  <body>
 
-  <div class="container">
-    <h2> <img src="../icons/icon.png"/>  NewsToolbar </h1>
-    <h4> Settings </h4>
+    <button type="button" class="btn btn-primary" id="showtoolbarbtn"> Show ToolBar </button>
 
-    <form>
-      <div class="form-group">
-        <label> Enter the url of your favorite news website </label>
-        <input type="url" class="form-control" id="newUrl" placeholder="Enter url">
-      </div>
-      <button type="button" class="btn btn-secondary"><ion-icon name="add-circle"></ion-icon></button>
-    </form>
-  </div>
+    <div class="container">
+      <h2> <img src="../icons/icon.png"/> NewsToolbar </h1>
+      <h4> Settings </h4>
 
-<script src="../bootstrap-3.3.7/js/bootstrap.min.js"></script>
+      <form>
+        <label>Default News Sites</label>
+        <div class="form-group" id="form-lstcheck"> onload? </div>
+
+        <div class="container">
+        <div class="row">
+          <div class="col-3">
+            <div class="form-group">
+              <label> Enter the url of your favorite news website </label>
+              <input type="url" class="form-control" id="newUrl" placeholder="eg: cnn.com">
+              <label> CSS Selector for links </label>
+              <input type="text" class="form-control" id="newUrl" placeholder="eg: .lstdiv">
+              <label> CSS Selector for Contents </label>
+              <input type="text" class="form-control" id="newUrl" placeholder="eg: .content">
+
+            </div>
+          </div>
+          <div class="col-2">
+            <button type="button" class="btn btn-secondary addBtn" onclick="addAnother()"></button>
+          </div>
+          </div>
+        </div>
+        <button type="submit"> Update </button>
+      </form>
+
+
+  </body>
+
 
 </html>
