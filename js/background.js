@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   function fetchNews() {
     if (jQuery) {
-
+      chrome.storage.local.set({'result': {}}, function() {});
       chrome.storage.local.get(['newsSetting'], function(result) {
         // console.log(JSON.stringify(result['newsSetting'][0]));
         if (result['newsSetting'] !== undefined)
