@@ -6,6 +6,16 @@ var urlList = [];
 var linkcssList = [];
 var contentcssList = [];
 
+var defaultNews = {
+  'cnn': {
+    selected: true,
+    sname: "CNN",
+    url: "https://www.cnn.com/us",
+    linkcss: ".cd_content",
+    contentcss: ".zn-body_read-all"
+  }
+}
+
 function addToSelected(sname) {
   console.log('addToSelected');
   var wrapper = document.getElementById("selected");
@@ -13,11 +23,16 @@ function addToSelected(sname) {
 }
 
 function updateSelected() {
-  chrome.storage.local.get(['defaultSetting'], function(result) {
+  chrome.storage.local.get(['newsSetting'], function(result) {
 
-        var newArr = (result['defaultSetting'] == undefined) ? []: result['defaultSetting'];
+        var newArr = (result['newsSetting'] == undefined) ? []: result['newsSetting'].map(i => i.sname);
         var wrapper = document.getElementById("selected");
-        wrapper.innerHTML = newArr.join(", ");
+        var myHTML = '';
+        for(var i=0; i<newArr.length; i++) {
+            myHTML += '<div class="form-check"><input class="form-check-input" type="checkbox" id="'+newArr[i]+'" checked><label class="form-check-label">'
+            + newArr[i] + '</label></div>'
+        }
+        wrapper.innerHTML = myHTML;
   });
 }
 
@@ -60,12 +75,7 @@ function initializeCheckBoxes() {
   wrapper.innerHTML = myHTML;
 }
 
-function addAnother() {
-  var sname = document.getElementById('sname').value;
-  var url = document.getElementById('url').value;
-  var linkcss = document.getElementById('linkcss').value;
-  var contentcss = document.getElementById('contentcss').value;
-
+function addNewSite(sname, url, linkcss, contentcss) {
   if (!(sname == '' && url == '' && linkcss == '' && contentcss == '')) {
 
     snameList.push(sname);
@@ -75,7 +85,7 @@ function addAnother() {
 
     // var wrapper = document.getElementById("selected");
     // wrapper.innerHTML += sname + ', ';
-    addToSelected(sname);
+    //addToSelected(sname);
 
     document.getElementById('sname').value = '';
     document.getElementById('url').value = '';
@@ -85,16 +95,24 @@ function addAnother() {
     chrome.storage.local.get(['newsSetting'], function(result) {
 
           var newArr = (result['newsSetting'] == undefined) ? []: result['newsSetting'];
-          newArr = [];
-          newArr.push({sname, url, linkcss, contentcss});
+          newArr.push({selected: true, sname, url, linkcss, contentcss});
 
           chrome.storage.local.set({'newsSetting': newArr}, function() {
               console.log('[popup] Value is set to ' + newArr);
+              updateSelected();
           });
     });
   }
   // wrapper.innerHTML += '<div class="form-group"><label> Enter the url of your favorite news website </label><input type="url" class="form-control" id="url" placeholder="eg: https://www.cnn.com/us"><label> CSS Selector for links </label><input type="text" class="form-control" id="linkcss" placeholder="eg: .lstdiv"><label> CSS Selector for Contents </label><input type="text" class="form-control" id="contentcss" placeholder="eg: .content"></div>'
+}
 
+function addAnother() {
+  var sname = document.getElementById('sname').value;
+  var url = document.getElementById('url').value;
+  var linkcss = document.getElementById('linkcss').value;
+  var contentcss = document.getElementById('contentcss').value;
+
+  addNewSite(sname, url, linkcss, contentcss);
 }
 
 function addCnn() {
@@ -102,28 +120,28 @@ function addCnn() {
   var cnnchecked = document.getElementById("CNN").checked;
   if (cnnchecked) {
 
-    chrome.storage.local.get(['defaultSetting'], function(result) {
+    chrome.storage.local.get(['newsSetting'], function(result) {
 
-          var newArr = (result['defaultSetting'] == undefined) ? []: result['defaultSetting'];
-          newArr.push('cnn');
+          var newArr = (result['newsSetting'] == undefined) ? []: result['newsSetting'];
+          newArr.push(defaultNews['cnn']);
 
-          chrome.storage.local.set({'defaultSetting': newArr}, function() {
+          chrome.storage.local.set({'newsSetting': newArr}, function() {
               // console.log('[popup] Value is set to ' + newArr);
               updateSelected();
           });
     });
     //document.getElementById("CNN").disabled = true;
   } else {
-    chrome.storage.local.get(['defaultSetting'], function(result) {
+    chrome.storage.local.get(['newsSetting'], function(result) {
 
-          var newArr = (result['defaultSetting'] == undefined) ? []: result['defaultSetting'];
+          var newArr = (result['newsSetting'] == undefined) ? []: result['newsSetting'];
           newArr = newArr.filter(function(item) {
-              return item != 'cnn';
+              return item.sname != 'CNN';
           })
 
           console.log(newArr);
 
-          chrome.storage.local.set({'defaultSetting': newArr}, function() {
+          chrome.storage.local.set({'newsSetting': newArr}, function() {
               // console.log('[popup] Value is set to ' + newArr);
               updateSelected();
           });
@@ -131,13 +149,24 @@ function addCnn() {
   }
 }
 
+
 window.onload = function () {
   // loadInitialSelected();
-  initializeCheckBoxes();
+  //initializeCheckBoxes();
 
   document.getElementById("addBtn").addEventListener("click", addAnother);
-  document.getElementById("CNN").addEventListener("click", addCnn);
+  //document.getElementById("CNN").addEventListener("click", addCnn);
 
+  //addCnn();
+  chrome.storage.local.get(['newsSetting'], function(result) {
+    var newArr = (result['newsSetting'] == undefined) ? []: result['newsSetting'].map(i => i.sname);
+    for(var key in defaultNews) {
+      var site = defaultNews[key];
+      if(!(newArr.includes(site.sname))) {
+        addNewSite(site.sname, site.url, site.linkcss, site.contentcss);
+      }
+    }
+  });
   updateSelected();
 
   console.log("in popup.js");
