@@ -38,6 +38,7 @@ function getArticleFromURL(host, articleUrl, articleSelector) {
     }
     );
 
+    chrome.storage.local.set({'result': {}});
     chrome.storage.local.get(['result'], function(data_arr) {
       // Host
       data_arr.result[url] = {'host': host};
