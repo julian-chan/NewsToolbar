@@ -128,20 +128,20 @@ function similationElement() {
     return textContainer;
   };
 
-  var lasttextContainer = createTextContainer("CNN", "Since Merahile benefiting from the backing and brand of a stable industry giant.", 1, "https://www.cnn.com/us?refresh=1");
-  movingframe.appendChild(lasttextContainer);
-  lasttextContainer = createTextContainer("LOL", "hahahahaha wow1", 0.7, "https://www.cnn.com/us?refresh=1");
-  movingframe.appendChild(lasttextContainer);
-  lasttextContainer = createTextContainer("LOL", "hahahahaha wow2", 0.5, "https://www.cnn.com/us?refresh=1");
-  movingframe.appendChild(lasttextContainer);
-  lasttextContainer = createTextContainer("LOL", "hahahahaha wow3", 0.3, "https://www.cnn.com/us?refresh=1");
-  movingframe.appendChild(lasttextContainer);
-  lasttextContainer = createTextContainer("LOL", "hahahahaha wow4", 0.1, "https://www.cnn.com/us?refresh=1");
-  movingframe.appendChild(lasttextContainer);
-
-  var end = document.createElement("span");
-  end.setAttribute("id", "end");
-  lasttextContainer.appendChild(end);
+  chrome.storage.local.get(['result'], function(result) {
+    // console.log(JSON.stringify(result['newsSetting'][0]));
+    if (result['result'] !== undefined)
+      var lasttextContainer;
+      for (var url in result['result']) {
+        lasttextContainer = createTextContainer(result['result'][url]['host'], result['result'][url]['summary'], result['result'][url]['sentiment'], url);
+        movingframe.appendChild(lasttextContainer);
+      }
+      if(lasttextContainer != undefined) {
+        var end = document.createElement("span");
+        end.setAttribute("id", "end");
+        lasttextContainer.appendChild(end);
+      }
+  });
 
   movingframe.style.color = "white";
   movingframe.addEventListener("mouseover", function() {}, false);
@@ -293,6 +293,7 @@ function addtoolbar(){
 var addbar = null; var dropshadow = null; var allsites = null; var toolbaronly = null; var toolbarDomains = null;var getpositiontop = null; var getpositionbottom = null; var toolbarwhite = null; toolbarblack = null;
 
 addtoolbar();
+var newsUpdateTimer = setInterval(updatetoolbar, 1 * 30 * 1000);
 // $("#hideBtn").click(() => alert("hahahaha"));
 
 
