@@ -26,6 +26,11 @@ input[type=checkbox] {
   position: -1rem;
 }
 
+.submitBtn {
+  float: right;
+  margin-bottom: 2rem;
+}
+
 /* input[type=checkbox] {
    position: absolute;
    top: -9999px;

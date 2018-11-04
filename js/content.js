@@ -116,12 +116,12 @@ function similationElement() {
   	if(similation == true) {
   	   // bar animation move
   	   var pos = -100;
-  	   var id = window.setInterval(frame, 1000);
+  	   var id = window.setInterval(frame, 50);
   	   var coord;
   	   // window.clearInterval(id);
   	   function frame() {
   				var d = new Date();
-  				var s = d.getSeconds() + Math.floor(d.getMilliseconds() / 1000);
+  				var s = d.getSeconds() + (d.getMilliseconds() / 1000);
 
   				if(s > 200){
   					s = 0;
@@ -230,16 +230,16 @@ function addtoolbar(){
 
 
       // create hide button
-      var btn = document.createElement("button");
-      var t = document.createTextNode("hide");
-      btn.setAttribute('id', "hideBtn");
-      btn.style.backgroundColor = "transparent";
-      btn.style.color = "white";
-      btn.style.border = "none";
-      btn.style.float = "right";
-      btn.appendChild(t);
-      div.appendChild(btn);
-      console.log("apendded: ");
+      // var btn = document.createElement("button");
+      // var t = document.createTextNode("hide");
+      // btn.setAttribute('id', "hideBtn");
+      // btn.style.backgroundColor = "transparent";
+      // btn.style.color = "white";
+      // btn.style.border = "none";
+      // btn.style.float = "right";
+      // btn.appendChild(t);
+      // div.appendChild(btn);
+      // console.log("apendded: ");
 
 
       var newframe = similationElement();
@@ -254,7 +254,7 @@ function addtoolbar(){
 var addbar = null; var dropshadow = null; var allsites = null; var toolbaronly = null; var toolbarDomains = null;var getpositiontop = null; var getpositionbottom = null; var toolbarwhite = null; toolbarblack = null;
 
 addtoolbar();
-$("hideBtn").click(() => removetoolbar());
+// $("#hideBtn").click(() => alert("hahahaha"));
 
 
 
