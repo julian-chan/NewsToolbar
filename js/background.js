@@ -134,11 +134,37 @@ let run = function(url, passage, summary_callback_fn, sentiment_callback_fn) {
         {'id': '1', 'language': 'en', 'text': passage}
     ]};
 
-    get_sentiments (url, doc, summary_callback_fn);
-    get_summary (url, passage, sentiment_callback_fn);
+    get_sentiments (url, doc, sentiment_callback_fn);
+    get_summary (url, passage, summary_callback_fn);
 };
 
 
-// Example
+// Example - Testing Code
+// let f1 = function (url, data) {
+//       // Summary
+//       chrome.storage.local.get(['result'], function(data_arr) {
+//         data_arr.result[url]['summary'] = data;
+//         chrome.storage.local.set({'result': data_arr.result});
+//       })
+//     };
+
+// let f2 = function (url, data) {
+//       // Sentiment
+//       chrome.storage.local.get(['result'], function(data_arr) {
+//         data_arr.result[url]['sentiment'] = data;
+//         chrome.storage.local.set({'result': data_arr.result});
+//       })
+//     };
+
+// var url = "www.yolo.com"
+// var host = "YOLO"
+
+// chrome.storage.local.set({'result': {}});
+// chrome.storage.local.get(['result'], function(data_arr) {
+//   // Host
+//   data_arr.result[url] = {'host': host};
+//   chrome.storage.local.set({'result': data_arr.result});
+// })
+
 // let article = 'An African Methodist pastor, dressed in a dark suit and white clerical collar, greeted a Conservative rabbi, wearing a black overcoat and matching fedora, in the lobby of a downtown hotel on Friday morning. They spread their arms wide and embraced at length, the rabbi patting the pastor rhythmically on the back as the pastor drew him close. Words were not necessary.The two men had never met, but for a week they have been bound by the unspeakable grief of two unconscionable desecrations. The pastor was the Rev. Eric S.C. Manning, who leads Emanuel African Methodist Episcopal Church in Charleston, S.C., where nine parishioners were  in a racist attack during a Wednesday night Bible study on June 17, 2015. The rabbi was Jeffrey Myers of the Tree of Life congregation in Pittsburgh’s Squirrel Hill neighborhood, where 11 worshipers were gunned down during shabbat services last Saturday.When a virulent anti-Semite walked through unlocked doors into a house of God that morning and opened fire on believers in prayer, the analogies to the massacre at Emanuel A.M.E. became inescapable. Here within 40 months were two ruthlessly murderous attacks in the most sacred of spaces, victimizing minority communities — one racial, one religious — that share a centuries-long struggle against bigotry and persecution.In both instances, the gunmen left a cache of hate-filled online commentary and eagerly volunteered their motives.'
-// run("lol", article, console.log, console.log);
+// run(url, article, f1, f2);
