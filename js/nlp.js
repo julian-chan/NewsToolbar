@@ -80,22 +80,6 @@ let get_sentiments = function (articles, callback_fn) {
     req.end();
 };
 
-let get_key_phrases = function (articles, callback_fn) {
-    let body = JSON.stringify (articles);
-
-    let request_params = {
-        method : 'POST',
-        hostname : azure_uri,
-        path : azure_key_phrases_path,
-        headers : {
-            'Ocp-Apim-Subscription-Key' : azure_accessKey,
-        }
-    };
-
-    let req = https.request (request_params, (res) => response_handler_azure(res, callback_fn));
-    req.write (body);
-    req.end ();
-};
 
 let run = function(passage, callback_fn) {
     let doc = {'documents': [
