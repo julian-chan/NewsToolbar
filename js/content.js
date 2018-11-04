@@ -105,12 +105,16 @@ function similationElement() {
   //me add
   var textContainer = document.createElement("span");
   textContainer.setAttribute("style", "white-space: nowrap;");
-  var t = document.createTextNode("a random sentence very randomly whatever blablablasdf;aslkdjf;alksdjf;alskjf;lak  hahahaha wow okay sure i mean whatever delay no more");
+  var t = document.createTextNode("Since Meraki builds cloud-managed hardware, our engineers hack a technology stack impressive in breadth as well as depth. It’s not uncommon for a Merakian to hop from backend coding to user experience design, from device driver reliability to system scalability, from site maintenance to mobile device management. Engineers who value broad exposure to many languages and skill sets can easily move between projects and teams, enjoying a unique degree of freedom to taste-test different flavors of development. For engineers who have found their sweet spot in the stack, the prerogative to specialize is no less than the freedom to move around—whether that means exclusive devotion to network protocol design, to our homegrown data storage layer, or to our mobile apps. Meraki engineers self-organize into small teams for big results, all while benefiting from the backing and brand of a stable industry giant.");
   textContainer.appendChild(t);
   movingframe.style.color = "white";
 
 
   movingframe.appendChild(textContainer);
+
+  var end = document.createElement("span");
+  end.setAttribute("id", "end");
+  textContainer.appendChild(end);
 
   movingframe.addEventListener("mouseover", function() {}, false);
   movingframe.addEventListener("mouseout", function() {}, false);
@@ -118,23 +122,22 @@ function similationElement() {
   var similation = true;
   	if(similation == true) {
   	   // bar animation move
-  	   var pos = -100;
+  	   var pos = 0;
   	   var id = window.setInterval(frame, 50);
   	   var coord;
   	   // window.clearInterval(id);
   	   function frame() {
-  				var d = new Date();
-  				var s = d.getSeconds() + (d.getMilliseconds() / 1000);
 
-  				if(s > 200){
-  					s = 0;
-  					pos = 0;
-  					movingframe.style.transform = "translateX(" + 0 + "%)";
-  				}else{
-  					pos = parseFloat(s * 3.4);
-  					coord = pos - 100;
-  					movingframe.style.transform = "translateX(" + coord + "%)";
-  				}
+         if(movingframe.style.transform.length == 0) {
+           movingframe.style.transform = "translateX(" + 101 + "%)";
+         }
+         var percentage = parseFloat(movingframe.style.transform.match(/[+-]?([0-9]*[.])?[0-9]+/)[0]);
+         percentage = percentage - 0.25;
+         var endposi = end.getBoundingClientRect();
+         if(endposi.left < 0) {
+           percentage = 100;
+         }
+         movingframe.style.transform = "translateX(" + percentage + "%)";
   	   }
   	}
 
@@ -150,6 +153,11 @@ function similationElement() {
 
   console.log("returning "+ newframe);
   return newframe;
+}
+
+function updatetoolbar(){
+  removetoolbar();
+  addtoolbar();
 }
 
 
