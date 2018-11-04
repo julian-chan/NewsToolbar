@@ -4,24 +4,41 @@ chrome.storage.local.set({'result': {}});
 var defaultNews = {
   'cnn': {
     url: "https://www.cnn.com/us",
-    linkcss: ".cd_content",
-    contentcss: ".zn-body_read-all"
+    linkcss: ".cd__content",
+    contentcss: ".zn-body__read-all"
   }
 }
 
 
 document.addEventListener("DOMContentLoaded", function(event) {
-  var newsUpdateTimer = setInterval(fetchNews, 1 * 1000000 * 1000);
+  chrome.storage.local.get(['newsSetting'], function(result) {
+    var newArr = (result['newsSetting'] == undefined) ? []: result['newsSetting'];
+    for(var key in defaultNews) {
+      var site = defaultNews[key];
+      if(!(newArr.map(i => i.sname).includes(site.sname))) {
+        newArr.push({selected: true, sname:site.sname, url:site.url, linkcss:site.linkcss, contentcss:site.contentcss});
+        chrome.storage.local.set({'newsSetting': newArr}, function() {
+        });
+      }
+    }
+  });
+
+  var newsUpdateTimer = setInterval(fetchNews, 1 * 60 * 1000);
 
   function fetchNews() {
     if (jQuery) {
+      console.log("fetchNews");
       chrome.storage.local.set({'result': {}}, function() {});
       chrome.storage.local.get(['newsSetting'], function(result) {
         // console.log(JSON.stringify(result['newsSetting'][0]));
-        if (result['newsSetting'] !== undefined)
-          for (var res in result['newsSetting']) {
+        if (result['newsSetting'] !== undefined) {
+          console.log(result['newsSetting']);
+          var r = result['newsSetting'];
+          for (var i = 0; i < r.length; i++) {
+            var res = r[i];
             getArticles(res.sname, res.url, res.linkcss, res.contentcss);
           }
+        }
       });
     }
   }
@@ -41,18 +58,20 @@ function getArticleFromURL(host, articleUrl, articleSelector) {
 
     chrome.storage.local.get(['result'], function(data_arr) {
       // Host
-      data_arr.result[url] = {'host': host};
+      data_arr.result[articleUrl] = {'host': host};
       chrome.storage.local.set({'result': data_arr.result});
-    })
+    });
 
-    run(url, result.join("\n"), function (url, data) {
+    run(articleUrl, result.join("\n"), function (url, data) {
       // Summary
+      console.log(data);
       chrome.storage.local.get(['result'], function(data_arr) {
         data_arr.result[url]['summary'] = data;
         chrome.storage.local.set({'result': data_arr.result});
       })
     }, function (url, data) {
       // Sentiment
+      console.log(data);
       chrome.storage.local.get(['result'], function(data_arr) {
         data_arr.result[url]['sentiment'] = data;
         chrome.storage.local.set({'result': data_arr.result});
@@ -74,11 +93,12 @@ function getArticles(host, pageUrl, pageSelector, articleSelector) {
     let urlsArray = Array.from(urlsInSelector, url => domain + $(url).prop("pathname"));
     let urlsSet = new Set(urlsArray);
     console.log(urlsSet);
-    urlsSet.forEach(
-        url => {
-          getArticleFromURL(host, url, articleSelector);
-        }
-    );
+    var urlsSetArray = Array.from(urlsSet);
+
+    for(var i = 0; i < Math.min(5, urlsSetArray.length); i++) {
+      console.log("getArticleFromURL");
+      getArticleFromURL(host, urlsSetArray[i], articleSelector);
+    }
   }});
 }
 
@@ -108,11 +128,12 @@ let deepai_accessKey = 'a68ee914-c771-44d5-9d89-731ebe21b53f';
 // and does it for every sentence, not the entire passage.
 let get_summary = function (url, articles, callback_fn) {
     var fd = new FormData();
-    fd.append('text', article)
+    fd.append('text', articles)
     var myInit = {method: 'POST', headers: {'Api-Key': deepai_accessKey}, body: fd};
     var myRequest = new Request("https://api.deepai.org/api/summarization", myInit)
     fetch(myRequest).then(function(response) {
         response.json().then(function (data) {
+          console.log(data);
           callback_fn(url, data['output']);
         })
       })
@@ -124,6 +145,7 @@ let get_sentiments = function (url, articles, callback_fn) {
     var myRequest = new Request("https://westcentralus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment", myInit)
     fetch(myRequest).then(function(response) {
         response.json().then(function (data) {
+          console.log(data);
           callback_fn(url, data.documents[0]['score']);
         })
       })
@@ -134,6 +156,8 @@ let run = function(url, passage, summary_callback_fn, sentiment_callback_fn) {
     let doc = {'documents': [
         {'id': '1', 'language': 'en', 'text': passage}
     ]};
+
+    console.log("run");
 
     get_sentiments (url, doc, sentiment_callback_fn);
     get_summary (url, passage, summary_callback_fn);

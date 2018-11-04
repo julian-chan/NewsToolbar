@@ -130,17 +130,17 @@ function similationElement() {
 
   chrome.storage.local.get(['result'], function(result) {
     // console.log(JSON.stringify(result['newsSetting'][0]));
-    if (result['result'] !== undefined)
+    console.log(result['result']);
+    if (result['result'] !== undefined && Object.keys(result['result']).length != 0) {
       var lasttextContainer;
       for (var url in result['result']) {
         lasttextContainer = createTextContainer(result['result'][url]['host'], result['result'][url]['summary'], result['result'][url]['sentiment'], url);
         movingframe.appendChild(lasttextContainer);
       }
-      if(lasttextContainer != undefined) {
-        var end = document.createElement("span");
-        end.setAttribute("id", "end");
-        lasttextContainer.appendChild(end);
-      }
+      var end = document.createElement("span");
+      end.setAttribute("id", "end");
+      lasttextContainer.appendChild(end);
+    }
   });
 
   movingframe.style.color = "white";
@@ -161,11 +161,14 @@ function similationElement() {
          }
          var percentage = parseFloat(movingframe.style.transform.match(/[+-]?([0-9]*[.])?[0-9]+/)[0]);
          percentage = percentage - 0.25;
-         var endposi = end.getBoundingClientRect();
-         if(endposi.left < 0) {
-           percentage = 100;
+         var end = document.getElementById("end");
+         if(end != undefined) {
+           var endposi = end.getBoundingClientRect();
+           if(endposi.left < 0) {
+             percentage = 100;
+           }
+           movingframe.style.transform = "translateX(" + percentage + "%)";
          }
-         movingframe.style.transform = "translateX(" + percentage + "%)";
   	   }
   	}
 
@@ -293,7 +296,7 @@ function addtoolbar(){
 var addbar = null; var dropshadow = null; var allsites = null; var toolbaronly = null; var toolbarDomains = null;var getpositiontop = null; var getpositionbottom = null; var toolbarwhite = null; toolbarblack = null;
 
 addtoolbar();
-var newsUpdateTimer = setInterval(updatetoolbar, 1 * 30 * 1000);
+var newsUpdateTimer = setInterval(updatetoolbar, 1 * 60 * 1000);
 // $("#hideBtn").click(() => alert("hahahaha"));
 
 

@@ -158,15 +158,6 @@ window.onload = function () {
   //document.getElementById("CNN").addEventListener("click", addCnn);
 
   //addCnn();
-  chrome.storage.local.get(['newsSetting'], function(result) {
-    var newArr = (result['newsSetting'] == undefined) ? []: result['newsSetting'].map(i => i.sname);
-    for(var key in defaultNews) {
-      var site = defaultNews[key];
-      if(!(newArr.includes(site.sname))) {
-        addNewSite(site.sname, site.url, site.linkcss, site.contentcss);
-      }
-    }
-  });
   updateSelected();
 
   console.log("in popup.js");
