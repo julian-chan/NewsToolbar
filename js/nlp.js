@@ -9,7 +9,7 @@ let https = require ('https');
 
 // Replace the accessKey string value with your valid access key.
 let azure_accessKey = '6495a8dfb8254821a1f9ab9ebef536c9';
-let deepai_accessKey = 'a68ee914-c771-44d5-9d89-731ebe21b53f'
+let deepai_accessKey = 'a68ee914-c771-44d5-9d89-731ebe21b53f';
 
 // Replace or verify the region.
 
