@@ -15,19 +15,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
   function fetchNews() {
     if (jQuery) {
 
-      chrome.storage.local.get(['defaultSetting'], function(result) {
-
-        if (result['defaultSetting'] !== undefined)
-          for (var res in result['defaultSetting']) {
-            getArticles(defaultNews[res].url, defaultNews[res].linkcss, defaultNews[res].contentcss);
-          }
-      });
-
       chrome.storage.local.get(['newsSetting'], function(result) {
         // console.log(JSON.stringify(result['newsSetting'][0]));
         if (result['newsSetting'] !== undefined)
           for (var res in result['newsSetting']) {
-            getArticles(res.url, res.linkcss, res.contentcss);
+            getArticles(res.sname, res.url, res.linkcss, res.contentcss);
           }
       });
     }
