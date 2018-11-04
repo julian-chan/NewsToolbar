@@ -103,19 +103,47 @@ function similationElement() {
   // movingframe.style.fontSize = getfontsize + "px";
 
   //me add
-  var textContainer = document.createElement("span");
-  textContainer.setAttribute("style", "white-space: nowrap;");
-  var t = document.createTextNode("Since Meraki builds cloud-managed hardware, our engineers hack a technology stack impressive in breadth as well as depth. It’s not uncommon for a Merakian to hop from backend coding to user experience design, from device driver reliability to system scalability, from site maintenance to mobile device management. Engineers who value broad exposure to many languages and skill sets can easily move between projects and teams, enjoying a unique degree of freedom to taste-test different flavors of development. For engineers who have found their sweet spot in the stack, the prerogative to specialize is no less than the freedom to move around—whether that means exclusive devotion to network protocol design, to our homegrown data storage layer, or to our mobile apps. Meraki engineers self-organize into small teams for big results, all while benefiting from the backing and brand of a stable industry giant.");
-  textContainer.appendChild(t);
-  movingframe.style.color = "white";
+  var createTextContainer = function(sourceName, text, sentiment, url) {
+    var hyperlink = document.createElement("a");
+    hyperlink.setAttribute("href", url);
+    hyperlink.setAttribute("target", "_blank");
+    hyperlink.setAttribute("style", "color: inherit;text-decoration: inherit;");
+    var textContainer = document.createElement("span");
+    var color;
+    if(sentiment < 0.20) {
+      color = "#ff4554";
+    } else if (sentiment < 0.4) {
+      color = "#FFA4AC";
+    } else if (sentiment < 0.6) {
+      color = "#FFFFFF";
+    } else if (sentiment < 0.8) {
+      color = "#C6E990";
+    } else {
+      color = "#a1e736";
+    }
+    textContainer.setAttribute("style", "white-space: nowrap; font-size:medium; color:" + color + "; margin: 0 20px 0 20px;");
+    var t = document.createTextNode("[" + sourceName + "] " + text);
+    hyperlink.appendChild(t);
+    textContainer.appendChild(hyperlink);
+    return textContainer;
+  };
 
-
-  movingframe.appendChild(textContainer);
+  var lasttextContainer = createTextContainer("CNN", "Since Merahile benefiting from the backing and brand of a stable industry giant.", 1, "https://www.cnn.com/us?refresh=1");
+  movingframe.appendChild(lasttextContainer);
+  lasttextContainer = createTextContainer("LOL", "hahahahaha wow1", 0.7, "https://www.cnn.com/us?refresh=1");
+  movingframe.appendChild(lasttextContainer);
+  lasttextContainer = createTextContainer("LOL", "hahahahaha wow2", 0.5, "https://www.cnn.com/us?refresh=1");
+  movingframe.appendChild(lasttextContainer);
+  lasttextContainer = createTextContainer("LOL", "hahahahaha wow3", 0.3, "https://www.cnn.com/us?refresh=1");
+  movingframe.appendChild(lasttextContainer);
+  lasttextContainer = createTextContainer("LOL", "hahahahaha wow4", 0.1, "https://www.cnn.com/us?refresh=1");
+  movingframe.appendChild(lasttextContainer);
 
   var end = document.createElement("span");
   end.setAttribute("id", "end");
-  textContainer.appendChild(end);
+  lasttextContainer.appendChild(end);
 
+  movingframe.style.color = "white";
   movingframe.addEventListener("mouseover", function() {}, false);
   movingframe.addEventListener("mouseout", function() {}, false);
 
