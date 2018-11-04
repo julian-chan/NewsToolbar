@@ -9,6 +9,9 @@
     },
     "default_popup": "view/popup.html"
   },
+  "permissions": [
+    "storage"
+  ],
   "content_scripts": [
     {
       "matches": [
