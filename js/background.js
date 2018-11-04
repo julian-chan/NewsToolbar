@@ -129,48 +129,27 @@ let response_handler_deepai = function (err, httpResponse, body, callback_fn) {
 // Not using DeepAI Sentiment Analysis because it only returns {Positive, Neutral, Negative}
 // and does it for every sentence, not the entire passage.
 let get_summary = function (articles, callback_fn) {
-    // request.post({
-    //     url: deepai_uri + deepai_summary_path,
-    //     headers: {
-    //         'Api-Key': deepai_accessKey
-    //     },
-    //     formData: {
-    //         'text': articles
-    //     }
-    // }, (error, response, body) => response_handler_deepai(error, response, body, callback_fn))
     var fd = new FormData();
     fd.append('text', article)
     var myInit = {method: 'POST', headers: {'Api-Key': deepai_accessKey}, body: fd};
     var myRequest = new Request("https://api.deepai.org/api/summarization", myInit)
     fetch(myRequest).then(function(response) {
-      const reader = response.body.getReader();
-      reader.read().then(function processText({ done, value }) {
-        var str = new TextDecoder("utf-8").decode(value);
-        var json = JSON.parse(str);
-        if (done) {
-          // callback
-          return;
-        }
+        response.json().then(function (data) {
+          callback_fn(data['output']);
+        })
       })
-    })
-  };
+    };
 
 let get_sentiments = function (articles, callback_fn) {
     let body = JSON.stringify (articles);
-
-    let request_params = {
-        method : 'POST',
-        hostname : azure_uri,
-        path : azure_sentiment_path,
-        headers : {
-            'Ocp-Apim-Subscription-Key' : azure_accessKey,
-        }
+    var myInit = {method: 'POST', headers: {'Ocp-Apim-Subscription-Key' : azure_accessKey, 'content-type': 'application/json'}, body: body};
+    var myRequest = new Request("https://westcentralus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment", myInit)
+    fetch(myRequest).then(function(response) {
+        response.json().then(function (data) {
+          callback_fn(data.documents[0]['score']);
+        })
+      })
     };
-
-    let req = https.request (request_params, (res) => response_handler_azure(res, callback_fn));
-    req.write(body);
-    req.end();
-};
 
 
 let run = function(passage, callback_fn) {
@@ -178,11 +157,11 @@ let run = function(passage, callback_fn) {
         {'id': '1', 'language': 'en', 'text': passage}
     ]};
 
-    // get_sentiments (doc, callback_fn);
+    get_sentiments (doc, callback_fn);
     get_summary (passage, callback_fn);
 };
 
 
 // Example
 let article = 'An African Methodist pastor, dressed in a dark suit and white clerical collar, greeted a Conservative rabbi, wearing a black overcoat and matching fedora, in the lobby of a downtown hotel on Friday morning. They spread their arms wide and embraced at length, the rabbi patting the pastor rhythmically on the back as the pastor drew him close. Words were not necessary.The two men had never met, but for a week they have been bound by the unspeakable grief of two unconscionable desecrations. The pastor was the Rev. Eric S.C. Manning, who leads Emanuel African Methodist Episcopal Church in Charleston, S.C., where nine parishioners were  in a racist attack during a Wednesday night Bible study on June 17, 2015. The rabbi was Jeffrey Myers of the Tree of Life congregation in Pittsburgh’s Squirrel Hill neighborhood, where 11 worshipers were gunned down during shabbat services last Saturday.When a virulent anti-Semite walked through unlocked doors into a house of God that morning and opened fire on believers in prayer, the analogies to the massacre at Emanuel A.M.E. became inescapable. Here within 40 months were two ruthlessly murderous attacks in the most sacred of spaces, victimizing minority communities — one racial, one religious — that share a centuries-long struggle against bigotry and persecution.In both instances, the gunmen left a cache of hate-filled online commentary and eagerly volunteered their motives.'
-// run(article, console.log);
+run(article, console.log);
