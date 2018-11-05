@@ -101,6 +101,8 @@ function getArticles(host, pageUrl, pageSelector, articleSelector) {
 // Replace the accessKey string value with your valid access key.
 let azure_accessKey = '6495a8dfb8254821a1f9ab9ebef536c9';
 let deepai_accessKey = 'a68ee914-c771-44d5-9d89-731ebe21b53f';
+let aylien_accessKey = '7c34b0f1f1370dcbca8e3d5af080a624';    // Text Summarization API
+
 
 // Replace or verify the region.
 
