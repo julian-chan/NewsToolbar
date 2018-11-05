@@ -3,6 +3,8 @@ chrome.storage.local.set({'result': {}});
 
 var defaultNews = {
   'cnn': {
+    selected: true,
+    sname: "CNN",
     url: "https://www.cnn.com/us",
     linkcss: ".cd__content",
     contentcss: ".zn-body__read-all"
@@ -32,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       chrome.storage.local.get(['newsSetting'], function(result) {
         // console.log(JSON.stringify(result['newsSetting'][0]));
         if (result['newsSetting'] !== undefined) {
-          console.log(result['newsSetting']);
+          // console.log(result['newsSetting']);
           var r = result['newsSetting'];
           for (var i = 0; i < r.length; i++) {
             var res = r[i];
@@ -56,14 +58,13 @@ function getArticleFromURL(host, articleUrl, articleSelector) {
     }
     );
 
-    run(articleUrl, result.join("\n"), function (url, summary, sentiment) {
+    run(host, articleUrl, result.join("\n"), function (host, url, summary, sentiment) {
       // Summary
       chrome.storage.local.get(['result'], function(data_arr) {
-        console.log(data_arr.result);
       })
       chrome.storage.local.get(['result'], function(data_arr) {
         data_arr.result[url] = {};
-        data_arr.result[url]['host'] = "CNN";
+        data_arr.result[url]['host'] = host;
         data_arr.result[url]['summary'] = summary;
         data_arr.result[url]['sentiment'] = sentiment;
         chrome.storage.local.set({'result': data_arr.result});
@@ -93,11 +94,6 @@ function getArticles(host, pageUrl, pageSelector, articleSelector) {
   }});
 }
 
-
-// var FormData = require('form-data');
-// let request = require('request');
-// let https = require ('https');
-
 // **********************************************
 // *** Update or verify the following values. ***
 // **********************************************
@@ -117,36 +113,8 @@ let deepai_accessKey = 'a68ee914-c771-44d5-9d89-731ebe21b53f';
 
 // Not using DeepAI Sentiment Analysis because it only returns {Positive, Neutral, Negative}
 // and does it for every sentence, not the entire passage.
-let get_summary = function (url, articles, callback_fn) {
-    var fd = new FormData();
-    fd.append('text', articles)
-    var myInit = {method: 'POST', headers: {'Api-Key': deepai_accessKey}, body: fd};
-    var myRequest = new Request("https://api.deepai.org/api/summarization", myInit)
-    fetch(myRequest).then(function(response) {
-        response.json().then(function (data) {
-          console.log(data);
-          callback_fn(url, data['output']);
-        })
-      })
-    };
-
-let get_sentiments = function (url, articles, callback_fn) {
-    let body = JSON.stringify (articles);
-    var myInit = {method: 'POST', headers: {'Ocp-Apim-Subscription-Key' : azure_accessKey, 'content-type': 'application/json'}, body: body};
-    var myRequest = new Request("https://westcentralus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment", myInit)
-    fetch(myRequest).then(function(response) {
-        response.json().then(function (data) {
-          console.log(data);
-          if (data.documents[0] !== undefined) {
-            callback_fn(url, data.documents[0]['score']);
-          } else {
-            callback_fn(url, 1);
-          }
-        })
-      })
-    };
-
-let analyze = function (url, articles_summary, articles_sentiment, callback_fn) {
+let analyze = function (host, url, articles_summary, articles_sentiment, callback_fn) {
+    // Text Summarization
     var output = {};
     var fd = new FormData();
     fd.append('text', articles_summary)
@@ -158,6 +126,7 @@ let analyze = function (url, articles_summary, articles_sentiment, callback_fn) 
         })
       });
 
+    // Sentiment Analysis
     let body = JSON.stringify (articles_sentiment);
     myInit = {method: 'POST', headers: {'Ocp-Apim-Subscription-Key' : azure_accessKey, 'content-type': 'application/json'}, body: body};
     myRequest = new Request("https://westcentralus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment", myInit)
@@ -171,51 +140,18 @@ let analyze = function (url, articles_summary, articles_sentiment, callback_fn) 
           if (!('summary' in output)) {
             output['summary'] = [url, 'No summary available.'];
           }
-          callback_fn(output['summary'][0], output['summary'][1], output['sentiment'][1]); 
+          callback_fn(host, output['summary'][0], output['summary'][1], output['sentiment'][1]); 
         })
       });
 }
 
 
-let run = function(url, passage, callback_fn) {
+let run = function(host, url, passage, callback_fn) {
     let doc = {'documents': [
         {'id': '1', 'language': 'en', 'text': passage}
     ]};
 
-    console.log("run");
+    console.log("Run");
 
-    analyze(url, passage, doc, callback_fn);
-    // get_sentiments (url, doc, sentiment_callback_fn);
-    // get_summary (url, passage, summary_callback_fn);
+    analyze(host, url, passage, doc, callback_fn);
 };
-
-
-// Example - Testing Code
-// let f1 = function (url, data) {
-//       // Summary
-//       chrome.storage.local.get(['result'], function(data_arr) {
-//         data_arr.result[url]['summary'] = data;
-//         chrome.storage.local.set({'result': data_arr.result});
-//       })
-//     };
-
-// let f2 = function (url, data) {
-//       // Sentiment
-//       chrome.storage.local.get(['result'], function(data_arr) {
-//         data_arr.result[url]['sentiment'] = data;
-//         chrome.storage.local.set({'result': data_arr.result});
-//       })
-//     };
-
-// var url = "www.yolo.com"
-// var host = "YOLO"
-
-// chrome.storage.local.set({'result': {}});
-// chrome.storage.local.get(['result'], function(data_arr) {
-//   // Host
-//   data_arr.result[url] = {'host': host};
-//   chrome.storage.local.set({'result': data_arr.result});
-// })
-
-// let article = 'An African Methodist pastor, dressed in a dark suit and white clerical collar, greeted a Conservative rabbi, wearing a black overcoat and matching fedora, in the lobby of a downtown hotel on Friday morning. They spread their arms wide and embraced at length, the rabbi patting the pastor rhythmically on the back as the pastor drew him close. Words were not necessary.The two men had never met, but for a week they have been bound by the unspeakable grief of two unconscionable desecrations. The pastor was the Rev. Eric S.C. Manning, who leads Emanuel African Methodist Episcopal Church in Charleston, S.C., where nine parishioners were  in a racist attack during a Wednesday night Bible study on June 17, 2015. The rabbi was Jeffrey Myers of the Tree of Life congregation in Pittsburgh’s Squirrel Hill neighborhood, where 11 worshipers were gunned down during shabbat services last Saturday.When a virulent anti-Semite walked through unlocked doors into a house of God that morning and opened fire on believers in prayer, the analogies to the massacre at Emanuel A.M.E. became inescapable. Here within 40 months were two ruthlessly murderous attacks in the most sacred of spaces, victimizing minority communities — one racial, one religious — that share a centuries-long struggle against bigotry and persecution.In both instances, the gunmen left a cache of hate-filled online commentary and eagerly volunteered their motives.'
-// run(url, article, f1, f2);

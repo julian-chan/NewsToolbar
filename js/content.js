@@ -296,7 +296,7 @@ function addtoolbar(){
 var addbar = null; var dropshadow = null; var allsites = null; var toolbaronly = null; var toolbarDomains = null;var getpositiontop = null; var getpositionbottom = null; var toolbarwhite = null; toolbarblack = null;
 
 addtoolbar();
-var newsUpdateTimer = setInterval(updatetoolbar, 1 * 60 * 1000);
+var newsUpdateTimer = setInterval(updatetoolbar, 1 * 10 * 1000);
 // $("#hideBtn").click(() => alert("hahahaha"));
 
 
